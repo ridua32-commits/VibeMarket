@@ -138,12 +138,12 @@ export default function AuthPage() {
          <div className="relative z-10 flex items-center gap-12">
             <div>
                <p className="text-3xl font-black text-foreground italic leading-none mb-1">95%</p>
-               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">Creator Split</p>
+               <p className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">Creator Split</p>
             </div>
             <div className="w-px h-10 bg-border"></div>
             <div>
                <p className="text-3xl font-black text-foreground italic leading-none mb-1">10k+</p>
-               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">Active Nodes</p>
+               <p className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">Active Nodes</p>
             </div>
          </div>
       </div>
@@ -184,7 +184,7 @@ export default function AuthPage() {
               <button
                 onClick={() => setRole('buyer')}
                 className={cn(
-                  "flex-1 py-3 px-4 rounded-xl text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
+                  "flex-1 py-3.5 px-6 rounded-xl text-xs font-black transition-all uppercase tracking-[0.2em] italic",
                   role === 'buyer' 
                     ? "bg-white text-black shadow-lg" 
                     : "text-muted-foreground hover:text-foreground"
@@ -195,7 +195,7 @@ export default function AuthPage() {
               <button
                 onClick={() => setRole('seller')}
                 className={cn(
-                  "flex-1 py-3 px-4 rounded-xl text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
+                  "flex-1 py-3.5 px-6 rounded-xl text-xs font-black transition-all uppercase tracking-[0.2em] italic",
                   role === 'seller' 
                     ? "bg-white text-black shadow-lg" 
                     : "text-muted-foreground hover:text-foreground"
@@ -212,7 +212,7 @@ export default function AuthPage() {
               animate={{ opacity: 1, height: 'auto' }}
               className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-center"
             >
-              <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] italic">
+              <p className="text-sm font-black text-red-500 uppercase tracking-[0.1em] italic">
                 {error}
               </p>
             </motion.div>
@@ -221,7 +221,7 @@ export default function AuthPage() {
           <form onSubmit={handleAuth} className="space-y-6">
             {isRegister && (
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Full Name</label>
+                <label className="block text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-4 italic">Full Name</label>
                 <div className="relative group">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                   <input
@@ -238,7 +238,7 @@ export default function AuthPage() {
 
             {isRegister && (
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">WhatsApp Number</label>
+                <label className="block text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-4 italic">WhatsApp Number</label>
                 <div className="relative group">
                   <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                   <input
@@ -254,7 +254,7 @@ export default function AuthPage() {
             )}
 
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Email Address</label>
+              <label className="block text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-4 italic">Email Address</label>
               <div className="relative group">
                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                 <input
@@ -269,7 +269,7 @@ export default function AuthPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Password</label>
+              <label className="block text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-4 italic">Password</label>
               <div className="relative group">
                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                 <input
@@ -286,7 +286,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full relative group overflow-hidden rounded-2xl py-5 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:scale-[1.01] active:scale-[0.98] transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-glow disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed mt-8 italic"
+              className="w-full relative group overflow-hidden rounded-2xl py-5 bg-white text-black font-black uppercase tracking-widest text-sm hover:scale-[1.01] active:scale-[0.98] transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-glow disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed mt-8 italic"
             >
                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                <span className="relative z-10 flex items-center justify-center gap-3">
@@ -303,22 +303,22 @@ export default function AuthPage() {
           </form>
 
           <div className="text-center py-2">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-3 font-display italic">
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-4 font-display italic">
               {isRegister ? 'Already have an account?' : 'Need a new identity?'}
             </p>
             <button
               onClick={() => navigate(isRegister ? '/auth' : '/auth?mode=register')}
-              className="text-[10px] font-black text-primary hover:text-primary/80 uppercase tracking-[0.2em] transition-colors italic group"
+              className="text-xs font-black text-primary hover:text-primary/80 uppercase tracking-[0.2em] transition-colors italic group"
             >
               {isRegister ? 'Login Instead' : 'Register Now'}
-              <span className="block h-0.5 w-0 group-hover:w-full bg-primary transition-all duration-300 mx-auto mt-1"></span>
+              <span className="block h-0.5 w-0 group-hover:w-full bg-primary transition-all duration-300 mx-auto mt-2"></span>
             </button>
           </div>
 
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-4 py-4 bg-surface-elevated/50 border border-border/50 rounded-2xl font-black text-[10px] text-foreground hover:bg-surface-elevated hover:border-primary/30 transition-all group active:scale-95 uppercase italic tracking-widest disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-4 py-5 bg-surface-elevated/50 border border-border/50 rounded-2xl font-black text-xs text-foreground hover:bg-surface-elevated hover:border-primary/30 transition-all group active:scale-95 uppercase italic tracking-widest disabled:opacity-50"
           >
             <img 
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
