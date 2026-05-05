@@ -49,6 +49,9 @@ export default function AuthPage() {
     } catch (err: any) {
       if (err.code === 'auth/invalid-credential') {
         setError('Login failed. If you usually use Google, please click the Google button below. Otherwise, check your password.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        const domain = window.location.hostname;
+        setError(`Unauthorized Domain: Please add "${domain}" to your Firebase Console (Authentication > Settings > Authorized Domains).`);
       } else {
         setError(err.message);
       }
@@ -78,7 +81,12 @@ export default function AuthPage() {
       }
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/unauthorized-domain') {
+        const domain = window.location.hostname;
+        setError(`Unauthorized Domain: Please add "${domain}" to your Firebase Console (Authentication > Settings > Authorized Domains) to enable login.`);
+      } else {
+        setError(err.message);
+      }
     }
   };
 
