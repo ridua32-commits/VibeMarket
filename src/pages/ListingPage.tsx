@@ -67,7 +67,7 @@ export default function ListingPage() {
               });
             }
           } catch (e) {
-            console.error("Error fetching seller info:", e);
+            handleFirestoreError(auth, e, OperationType.GET, `users/${data.sellerId}`);
           }
         } else {
           // Check placeholder data for demo

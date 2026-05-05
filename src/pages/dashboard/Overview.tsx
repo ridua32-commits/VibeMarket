@@ -44,44 +44,54 @@ export default function Overview({ user, profile }: { user: any, profile: UserPr
               loading: false
             }));
           } catch (err) {
-            console.error('Admin stats fetch failed:', err);
+            handleFirestoreError(auth, err, OperationType.GET, 'multiple/stats');
             // Fallback for demo/if rules are still propagation
             setStats(prev => ({ ...prev, loading: false }));
           }
         } else if (isSeller) {
-          const [listingsSnap, ordersSnap] = await Promise.all([
-            getDocs(query(collection(db, 'listings'), where('sellerId', '==', user.uid))),
-            getDocs(query(collection(db, 'orders'), where('sellerId', '==', user.uid)))
-          ]);
+          try {
+            const [listingsSnap, ordersSnap] = await Promise.all([
+              getDocs(query(collection(db, 'listings'), where('sellerId', '==', user.uid))),
+              getDocs(query(collection(db, 'orders'), where('sellerId', '==', user.uid)))
+            ]);
 
-          const earnings = ordersSnap.docs.reduce((sum, doc) => {
-            const data = doc.data();
-            return data.status === 'completed' ? sum + (data.amount || 0) : sum;
-          }, 0);
+            const earnings = ordersSnap.docs.reduce((sum, doc) => {
+              const data = doc.data();
+              return data.status === 'completed' ? sum + (data.amount || 0) : sum;
+            }, 0);
 
-          setStats(prev => ({
-            ...prev,
-            activeListings: listingsSnap.docs.filter(d => d.data().status === 'active').length,
-            sellerEarnings: earnings,
-            loading: false
-          }));
+            setStats(prev => ({
+              ...prev,
+              activeListings: listingsSnap.docs.filter(d => d.data().status === 'active').length,
+              sellerEarnings: earnings,
+              loading: false
+            }));
+          } catch (err) {
+            handleFirestoreError(auth, err, OperationType.GET, 'seller/stats');
+            setStats(prev => ({ ...prev, loading: false }));
+          }
         } else {
-          const ordersSnap = await getDocs(query(collection(db, 'orders'), where('buyerId', '==', user.uid)));
-          
-          const invested = ordersSnap.docs.reduce((sum, doc) => {
-            const data = doc.data();
-            return data.status === 'completed' ? sum + (data.amount || 0) : sum;
-          }, 0);
+          try {
+            const ordersSnap = await getDocs(query(collection(db, 'orders'), where('buyerId', '==', user.uid)));
+            
+            const invested = ordersSnap.docs.reduce((sum, doc) => {
+              const data = doc.data();
+              return data.status === 'completed' ? sum + (data.amount || 0) : sum;
+            }, 0);
 
-          setStats(prev => ({
-            ...prev,
-            librarySize: ordersSnap.docs.filter(d => d.data().status === 'completed').length,
-            buyerInvested: invested,
-            loading: false
-          }));
+            setStats(prev => ({
+              ...prev,
+              librarySize: ordersSnap.docs.filter(d => d.data().status === 'completed').length,
+              buyerInvested: invested,
+              loading: false
+            }));
+          } catch (err) {
+            handleFirestoreError(auth, err, OperationType.GET, 'buyer/stats');
+            setStats(prev => ({ ...prev, loading: false }));
+          }
         }
       } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
+        handleFirestoreError(auth, error, OperationType.GET, 'dashboard/stats');
         setStats(prev => ({ ...prev, loading: false }));
       }
     }

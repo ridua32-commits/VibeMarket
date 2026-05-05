@@ -33,7 +33,7 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow get: if isValidId(userId) && isSignedIn();
+      allow get: if isValidId(userId); // Allow public get for profiles (listing seller info)
       allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100 && resource.data.uid == request.auth.uid);
       allow create: if isOwner(userId) && isValidId(userId) && isValidUser(incoming()) && incoming().createdAt == request.time;
       allow update: if isValidId(userId) && (
