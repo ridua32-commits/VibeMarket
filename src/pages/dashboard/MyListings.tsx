@@ -3,7 +3,7 @@ import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from 'fire
 import { db, handleFirestoreError, OperationType, auth } from '../../lib/firebase';
 import { useAuth } from '../../App';
 import { Listing } from '../../types';
-import { formatPrice } from '../../lib/utils';
+import { formatPrice, cn } from '../../lib/utils';
 import { Edit2, Trash2, Eye, ExternalLink, BarChart3, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -51,87 +51,102 @@ export default function MyListings() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">My Listings</h1>
-          <p className="text-slate-500">Manage your products and track performance.</p>
+    <div className="space-y-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 text-[11px] font-black text-accent uppercase tracking-[0.4em] mb-2 italic">
+            <div className="w-8 h-px bg-accent/30" />
+            Inventory Protocol
+          </div>
+          <h1 className="text-5xl font-black text-foreground font-display tracking-[-0.05em] leading-[0.85] uppercase italic">
+            Your <span className="text-glow-gradient">Deployments</span>
+          </h1>
+          <p className="text-muted-foreground text-sm font-bold italic border-l-2 border-primary/20 pl-6 mt-4">Manage your engineered logic and track system throughput.</p>
         </div>
         <Link 
           to="/dashboard/sell" 
-          className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 dark:shadow-none"
+          className="flex items-center gap-3 px-10 py-5 bg-white text-background rounded-full font-black text-sm uppercase italic tracking-tighter hover:bg-accent transition-all shadow-glow hover:scale-105 active:scale-95 group"
         >
-          <Plus className="w-5 h-5" />
-          List New Item
+          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+          Initialize New Listing
         </Link>
       </div>
 
       {loading ? (
-        <div className="space-y-4">
-          {[1,2].map(i => <div key={i} className="h-32 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-2xl" />)}
+        <div className="space-y-6">
+          {[1,2,3].map(i => <div key={i} className="h-28 bg-surface border border-border animate-shimmer rounded-[2.5rem]" />)}
         </div>
       ) : listings.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center">
-          <p className="text-slate-500 mb-6 font-medium">You haven't listed any products yet.</p>
-          <Link to="/dashboard/sell" className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">
-            <Plus className="w-5 h-5" />
-            Create Your First Listing
+        <div className="bg-surface/30 border-2 border-dashed border-border rounded-[3.5rem] p-24 text-center group">
+          <div className="w-24 h-24 bg-surface border border-border rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-muted-foreground/30 shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+             <Plus className="w-10 h-10" />
+          </div>
+          <p className="text-foreground font-black text-xl uppercase tracking-tighter italic mb-4">No Nodes Active</p>
+          <p className="text-muted-foreground text-sm font-bold italic max-w-xs mx-auto mb-10">Your digital library is currently empty. Broadcast your first deployment to begin.</p>
+          <Link to="/dashboard/sell" className="inline-flex items-center gap-3 px-10 py-4 bg-primary text-white rounded-full font-black text-[11px] uppercase tracking-widest italic hover:shadow-glow transition-all active:scale-95">
+            <Plus className="w-4 h-4" />
+            Publish First Module
           </Link>
         </div>
       ) : (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-surface border border-border rounded-[3rem] overflow-hidden shadow-elegant relative">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800/50">
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 dark:border-slate-800">Product</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 dark:border-slate-800">Price</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 dark:border-slate-800">Sales</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 dark:border-slate-800">Status</th>
-                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100 dark:border-slate-800">Actions</th>
+                <tr className="bg-surface-elevated/50">
+                  <th className="px-6 py-5 sm:px-8 sm:py-6 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground border-b border-border italic">Module</th>
+                  <th className="px-6 py-5 sm:px-8 sm:py-6 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground border-b border-border italic">Price</th>
+                  <th className="px-6 py-5 sm:px-8 sm:py-6 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground border-b border-border italic">Network Hits</th>
+                  <th className="px-6 py-5 sm:px-8 sm:py-6 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground border-b border-border italic">Status</th>
+                  <th className="px-6 py-5 sm:px-8 sm:py-6 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground border-b border-border italic text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-border">
                 {listings.map((listing) => (
-                  <tr key={listing.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0">
+                  <tr key={listing.id} className="hover:bg-primary/5 transition-colors group">
+                    <td className="px-6 py-5 sm:px-8 sm:py-6">
+                      <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-background border border-border overflow-hidden shrink-0 shadow-sm transition-transform group-hover:scale-110">
                           <img src={listing.screenshots[0]} className="w-full h-full object-cover" />
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{listing.title}</p>
-                          <p className="text-xs text-slate-400 capitalize">{listing.category}</p>
+                          <p className="font-black text-foreground uppercase italic tracking-tighter text-base sm:text-lg leading-none mb-1 whitespace-nowrap">{listing.title}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">{listing.category}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">
+                    <td className="px-6 py-5 sm:px-8 sm:py-6 font-black text-foreground italic text-base sm:text-lg tracking-tighter whitespace-nowrap">
                       {formatPrice(listing.price)}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
-                        <BarChart3 className="w-4 h-4 text-indigo-500" />
+                    <td className="px-6 py-5 sm:px-8 sm:py-6">
+                      <div className="flex items-center gap-2 font-black text-accent italic uppercase tracking-tighter">
+                        <BarChart3 className="w-4 h-4 shadow-cyan-glow" />
                         0
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                    <td className="px-6 py-5 sm:px-8 sm:py-6">
+                      <span className={cn(
+                        "px-3 sm:px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] italic border whitespace-nowrap",
+                        listing.status === 'active' 
+                          ? "bg-primary/10 text-primary border-primary/20" 
+                          : "bg-surface text-muted-foreground border-border"
+                      )}>
                         {listing.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Link to={`/listing/${listing.id}`} className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all rounded-lg hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                          <Eye className="w-4 h-4" />
+                    <td className="px-6 py-5 sm:px-8 sm:py-6">
+                      <div className="flex items-center justify-end gap-3">
+                        <Link to={`/listing/${listing.id}`} className="w-10 h-10 flex items-center justify-center p-2 text-muted-foreground hover:text-accent transition-all rounded-xl hover:bg-surface-elevated border border-transparent hover:border-border active:scale-90">
+                          <Eye className="w-5 h-5" />
                         </Link>
-                        <Link to={`/dashboard/edit/${listing.id}`} className="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all rounded-lg hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                          <Edit2 className="w-4 h-4" />
+                        <Link to={`/dashboard/edit/${listing.id}`} className="w-10 h-10 flex items-center justify-center p-2 text-muted-foreground hover:text-primary transition-all rounded-xl hover:bg-surface-elevated border border-transparent hover:border-border active:scale-90">
+                          <Edit2 className="w-5 h-5" />
                         </Link>
                         <button 
                           onClick={() => handleDelete(listing.id)}
-                          className="p-2 text-slate-400 hover:text-red-500 transition-all rounded-lg hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                          className="w-10 h-10 flex items-center justify-center p-2 text-muted-foreground hover:text-destructive transition-all rounded-xl hover:bg-destructive/10 border border-transparent hover:border-destructive/20 active:scale-90"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                     </td>

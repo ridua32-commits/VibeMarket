@@ -53,12 +53,12 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#F8FAFC]">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl mb-4 animate-bounce shadow-lg shadow-indigo-100 flex items-center justify-center">
-            <span className="text-white font-bold">V</span>
+          <div className="w-12 h-12 bg-primary rounded-xl mb-4 animate-pulse flex items-center justify-center">
+            <span className="text-white font-bold text-xl font-display">V</span>
           </div>
-          <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">VibeMarket Loading</p>
+          <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest animate-pulse">Initialising System</p>
         </div>
       </div>
     );
@@ -67,7 +67,7 @@ export default function App() {
   return (
     <AuthContext.Provider value={{ user, profile, loading }}>
       <Router>
-        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-indigo-600 selection:text-white font-sans">
+        <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-white font-sans">
           <Navbar />
           <main>
             <Routes>

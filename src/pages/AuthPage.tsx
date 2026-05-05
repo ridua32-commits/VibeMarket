@@ -83,160 +83,202 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center p-4 bg-[#F8FAFC]">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-slate-200/50 border border-slate-200"
-      >
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-100">
-            <span className="text-white font-bold text-xl">V</span>
-          </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 mb-2 font-display italic tracking-tight">
-            {isRegister ? 'Join the Circle' : 'Welcome Back'}
-          </h1>
-          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-            {isRegister ? 'Start your journey as a creator or buyer' : 'Access your vibe-coded library'}
-          </p>
-        </div>
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-background selection:bg-primary/30">
+      {/* Visual Side */}
+      <div className="hidden lg:flex flex-col relative overflow-hidden bg-surface-elevated p-20 justify-between items-start border-r border-border">
+         <div className="absolute inset-0 bg-hero-gradient opacity-20"></div>
+         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,242,0.05),transparent_70%)]"></div>
+         <div className="absolute -bottom-20 -left-20 w-[600px] h-[600px] bg-primary rounded-full blur-[180px] opacity-10"></div>
+         <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] bg-accent rounded-full blur-[150px] opacity-5"></div>
+         
+         <Link to="/" className="relative z-10 flex items-center gap-3 group">
+            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+               <span className="text-background font-black text-2xl font-display italic">V</span>
+            </div>
+            <span className="text-2xl font-black text-foreground uppercase italic tracking-tighter font-display">VibeMarket</span>
+         </Link>
 
-        {isRegister && (
-          <div className="flex gap-2 p-1.5 bg-slate-50 rounded-2xl mb-8 border border-slate-100">
-            <button
-              onClick={() => setRole('buyer')}
-              className={cn(
-                "flex-1 py-3 px-4 rounded-xl text-[10px] font-bold transition-all uppercase tracking-widest",
-                role === 'buyer' 
-                  ? "bg-white text-indigo-600 shadow-sm border border-slate-200" 
-                  : "text-slate-400 hover:text-slate-500"
-              )}
-            >
-              Buyer Focus
-            </button>
-            <button
-              onClick={() => setRole('seller')}
-              className={cn(
-                "flex-1 py-3 px-4 rounded-xl text-[10px] font-bold transition-all uppercase tracking-widest",
-                role === 'seller' 
-                  ? "bg-white text-indigo-600 shadow-sm border border-slate-200" 
-                  : "text-slate-400 hover:text-slate-500"
-              )}
-            >
-              Seller Focus
-            </button>
-          </div>
-        )}
+         <div className="relative z-10 space-y-8 max-w-lg">
+            <h2 className="text-5xl xl:text-7xl font-black text-foreground uppercase italic leading-[0.85] tracking-[-0.05em] font-display">
+               Unlock <span className="text-glow-gradient">Elite</span> Logic systems
+            </h2>
+            <p className="text-lg xl:text-xl text-muted-foreground font-bold italic leading-relaxed border-l-2 border-primary/40 pl-8">
+              Join the guild of 5,000+ engineers building high-performance architectures in the nebula.
+            </p>
+         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-tight rounded-xl border border-red-100 italic">
-            {error}
-          </div>
-        )}
+         <div className="relative z-10 flex items-center gap-12">
+            <div>
+               <p className="text-3xl font-black text-foreground italic leading-none mb-1">95%</p>
+               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">Creator Split</p>
+            </div>
+            <div className="w-px h-10 bg-border"></div>
+            <div>
+               <p className="text-3xl font-black text-foreground italic leading-none mb-1">10k+</p>
+               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] italic">Active Nodes</p>
+            </div>
+         </div>
+      </div>
 
-        <form onSubmit={handleAuth} className="space-y-5">
+      {/* Form Side */}
+      <div className="flex items-center justify-center p-6 sm:p-12 md:p-20 relative overflow-hidden bg-background">
+        <div className="absolute inset-0 bg-grid-white opacity-[0.02] pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(111,0,255,0.05),transparent_70%)] pointer-events-none"></div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-full max-w-md space-y-12 relative z-10"
+        >
+          <div className="text-center lg:text-left mb-10">
+            <div className="lg:hidden w-16 h-16 bg-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-glow">
+              <span className="text-background font-black text-3xl font-display italic">V</span>
+            </div>
+            <h1 className="text-5xl font-black text-foreground mb-3 font-display italic tracking-[-0.05em] uppercase leading-none">
+              {isRegister ? 'New Deployment' : 'System Access'}
+            </h1>
+            <p className="text-muted-foreground text-[11px] font-black uppercase tracking-[0.4em] leading-relaxed italic">
+              {isRegister ? 'Initialize your engineering identify' : 'Authorize current session tokens'}
+            </p>
+          </div>
+
           {isRegister && (
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 ml-1">Full Name</label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300 text-sm font-medium"
-                  placeholder="Enter your name"
-                />
-              </div>
+            <div className="flex gap-2 p-1.5 bg-surface rounded-full border border-border shadow-inner">
+              <button
+                onClick={() => setRole('buyer')}
+                className={cn(
+                  "flex-1 py-3 px-4 rounded-full text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
+                  role === 'buyer' 
+                    ? "bg-primary text-white shadow-glow" 
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Acquire Mode
+              </button>
+              <button
+                onClick={() => setRole('seller')}
+                className={cn(
+                  "flex-1 py-3 px-4 rounded-full text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
+                  role === 'seller' 
+                    ? "bg-primary text-white shadow-glow" 
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Creator Mode
+              </button>
             </div>
           )}
 
-          {isRegister && (
-            <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 ml-1">Phone Number (WhatsApp)</label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="tel"
-                  required
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300 text-sm font-medium"
-                  placeholder="e.g. +1234567890"
-                />
-              </div>
+          {error && (
+            <div className="p-5 bg-destructive/10 text-destructive text-[11px] font-black uppercase tracking-widest rounded-2xl border border-destructive/20 italic text-center animate-pulse">
+              {error}
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 ml-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300 text-sm font-medium"
-                placeholder="you@example.com"
-              />
-            </div>
-          </div>
+          <form onSubmit={handleAuth} className="space-y-6">
+            {isRegister && (
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Identify Handle</label>
+                <div className="relative group">
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full pl-14 pr-6 py-5 bg-surface border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/30 text-foreground text-sm font-bold italic"
+                    placeholder="Enter full name"
+                  />
+                </div>
+              </div>
+            )}
 
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300 text-sm font-medium"
-                placeholder="••••••••"
-              />
+            {isRegister && (
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Direct Comms (WhatsApp)</label>
+                <div className="relative group">
+                  <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
+                  <input
+                    type="tel"
+                    required
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="w-full pl-14 pr-6 py-5 bg-surface border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/30 text-foreground text-sm font-bold italic"
+                    placeholder="+1 (202) 555-0156"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Secure Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-14 pr-6 py-5 bg-surface border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/30 text-foreground text-sm font-bold italic"
+                  placeholder="name@domain.com"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Access Passkey</label>
+              <div className="relative group">
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-14 pr-6 py-5 bg-surface border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/30 text-foreground text-sm font-bold italic"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-6 bg-white text-background rounded-full font-black text-xl uppercase tracking-tighter hover:bg-accent transition-all shadow-glow hover:shadow-cyan-glow disabled:opacity-50 mt-4 active:scale-95 italic group"
+            >
+              {loading ? 'Initializing...' : isRegister ? 'Establish Node' : 'Authorize Sync'}
+            </button>
+          </form>
+
+          <div className="relative py-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border"></span>
+            </div>
+            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.4em] font-display">
+              <span className="bg-background px-8 text-muted-foreground italic">Vibe Protocols</span>
             </div>
           </div>
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 disabled:opacity-50 mt-2"
+            onClick={handleGoogleSignIn}
+            className="w-full flex items-center justify-center gap-5 py-5 bg-surface-elevated border border-border rounded-full font-black text-xs text-foreground hover:bg-surface transition-all shadow-elegant group active:scale-95 uppercase italic tracking-widest"
           >
-            {loading ? 'Processing...' : isRegister ? 'Create Account' : 'Secure Login'}
+            <Chrome className="w-6 h-6 text-accent group-hover:scale-125 transition-all shadow-cyan-glow" />
+            Sync with Google
           </button>
-        </form>
 
-        <div className="relative my-10">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-slate-100"></span>
+          <div className="text-center pt-8">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-4 font-display italic">
+              {isRegister ? 'Already established?' : "Zero knowledge record?"}
+            </p>
+            <Link
+              to={isRegister ? '/auth' : '/auth?mode=register'}
+              className="text-foreground font-black text-lg tracking-tighter hover:text-accent transition-all italic font-display uppercase border-b-2 border-primary/20 pb-2 hover:border-accent"
+            >
+              {isRegister ? 'Initiate Sign in sequence' : 'Initialize New Account'}
+            </Link>
           </div>
-          <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest">
-            <span className="bg-white px-4 text-slate-300">Fast Connect</span>
-          </div>
-        </div>
-
-        <button
-          onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3 py-3.5 bg-white border border-slate-200 rounded-2xl font-bold text-xs text-slate-600 hover:bg-slate-50 transition-all mb-6 shadow-sm"
-        >
-          <Chrome className="w-4 h-4" />
-          Continue with Google
-        </button>
-
-        <div className="text-center">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-            {isRegister ? 'Already verified?' : "New to VibeMarket?"}
-          </p>
-          <Link
-            to={isRegister ? '/auth' : '/auth?mode=register'}
-            className="text-indigo-600 font-bold text-sm tracking-tight hover:text-indigo-700 transition-colors italic font-display"
-          >
-            {isRegister ? 'Sign in to your account' : 'Create an account in seconds'}
-          </Link>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

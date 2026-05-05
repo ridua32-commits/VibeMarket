@@ -3,7 +3,7 @@ import { collection, query, where, getDocs, orderBy, addDoc, doc, getDoc, server
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../App';
 import { Order, Listing } from '../../types';
-import { formatPrice } from '../../lib/utils';
+import { formatPrice, cn } from '../../lib/utils';
 import { Download, ExternalLink, Calendar, CheckCircle2, ShoppingBag, Tag } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 
@@ -83,63 +83,75 @@ export default function Purchases() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold mb-1 text-slate-900 font-display italic">My Purchases</h1>
-        <p className="text-slate-500 text-sm font-medium">Access and download your verified vibed-coded assets.</p>
+    <div className="space-y-12">
+      <div className="space-y-2">
+        <div className="flex items-center gap-3 text-[11px] font-black text-accent uppercase tracking-[0.4em] mb-2 italic">
+          <div className="w-8 h-px bg-accent/30" />
+          Acquisition Log
+        </div>
+        <h1 className="text-5xl font-black text-foreground font-display tracking-[-0.05em] leading-[0.85] uppercase italic">
+          Verified <span className="text-glow-gradient">Modules</span>
+        </h1>
+        <p className="text-muted-foreground text-sm font-bold italic border-l-2 border-primary/20 pl-6 mt-4">Access and download your engineered logic systems directly from the network.</p>
       </div>
 
       {success && (
-        <div className="flex items-center gap-3 p-4 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-100 mb-6 shadow-sm shadow-indigo-50">
-          <CheckCircle2 className="w-5 h-5 text-indigo-600" />
-          <span className="font-bold text-xs uppercase tracking-tight">Purchase successful! Your asset is now available below.</span>
+        <div className="flex items-center gap-4 p-5 bg-primary/10 text-primary rounded-[2rem] border border-primary/20 mb-8 shadow-glow italic animate-pulse">
+          <CheckCircle2 className="w-6 h-6" />
+          <span className="font-black text-[11px] uppercase tracking-widest">Protocol Success: Acquisition verified and synced to your node library.</span>
         </div>
       )}
 
       {loading ? (
-        <div className="space-y-4">
-          {[1,2].map(i => <div key={i} className="h-24 bg-slate-100 animate-pulse rounded-2xl" />)}
+        <div className="space-y-6">
+          {[1,2,3].map(i => <div key={i} className="h-32 bg-surface border border-border animate-shimmer rounded-[2.5rem]" />)}
         </div>
       ) : orders.length === 0 ? (
-        <div className="bg-slate-50 border border-slate-100 rounded-3xl p-12 text-center space-y-6">
-          <div className="w-16 h-16 bg-white border border-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-300 shadow-sm">
-            <ShoppingBag className="w-8 h-8" />
+        <div className="bg-surface/30 border-2 border-dashed border-border rounded-[3.5rem] p-24 text-center group">
+          <div className="w-24 h-24 bg-surface border border-border rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-muted-foreground/30 shadow-inner group-hover/empty:scale-110 group-hover/empty:rotate-6 transition-all duration-500">
+             <ShoppingBag className="w-10 h-10" />
           </div>
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold text-slate-900 font-display">No purchases yet</h3>
-            <p className="text-slate-500 text-sm max-w-xs mx-auto">Explore the marketplace and find your next vibe-coded app.</p>
-          </div>
-          <Link to="/marketplace" className="inline-block px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100">
-            Browse Marketplace
+          <p className="text-foreground font-black text-xl uppercase tracking-tighter italic mb-4">Registry Empty</p>
+          <p className="text-muted-foreground text-sm font-bold italic max-w-xs mx-auto mb-10">No modules have been acquisitioned yet. Explore the forge to discover elite logic.</p>
+          <Link to="/marketplace" className="inline-flex items-center gap-3 px-10 py-5 bg-white text-background rounded-full font-black text-[11px] uppercase tracking-widest italic hover:bg-accent transition-all shadow-glow active:scale-95">
+            <ShoppingBag className="w-4 h-4" />
+            Enter Marketplace
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-6">
           {orders.map((order) => (
-            <div key={order.id} className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-md transition-all group">
-              <div className="flex items-center gap-4 w-full">
-                <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden shrink-0 border border-slate-200">
+            <div key={order.id} className="bg-surface border border-border rounded-[2.5rem] p-5 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-10 hover:border-primary/30 transition-all group shadow-elegant active:scale-[0.99] relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-primary rounded-full blur-[80px] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+              <div className="flex items-center gap-6 sm:gap-8 w-full">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-background rounded-2xl flex items-center justify-center overflow-hidden shrink-0 border border-border shadow-sm group-hover:scale-110 transition-transform duration-500">
                   {order.listing?.screenshots?.[0] ? (
-                    <img src={order.listing.screenshots[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src={order.listing.screenshots[0]} className="w-full h-full object-cover" />
                   ) : (
-                    <Tag className="w-6 h-6 text-slate-300" />
+                    <Tag className="w-8 h-8 text-muted-foreground/30" />
                   )}
                 </div>
-                <div>
-                  <h3 className="font-bold text-base text-slate-900 font-display italic leading-tight group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{order.listing?.title || 'Unknown Asset'}</h3>
-                  <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
-                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> May 4, 2026</span>
-                    <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-md">{order.status}</span>
+                <div className="space-y-2">
+                  <h3 className="font-black text-2xl text-foreground font-display italic leading-none group-hover:text-glow-gradient transition-colors uppercase tracking-tighter">{order.listing?.title || 'Unknown Protocol'}</h3>
+                  <div className="flex flex-wrap items-center gap-4 text-[10px] font-black italic uppercase tracking-[0.2em] text-muted-foreground/60">
+                    <span className="flex items-center gap-2 pr-4 border-r border-border"><Calendar className="w-3.5 h-3.5 text-accent" /> May 4, 2026</span>
+                    <span className={cn(
+                        "px-3 py-1 rounded-full text-[9px] font-black border",
+                        order.status === 'completed' 
+                          ? "bg-primary/10 text-primary border-primary/20 shadow-glow" 
+                          : "bg-surface text-muted-foreground border-border"
+                      )}>{order.status}</span>
+                    <span className="text-foreground">{formatPrice(order.amount)}</span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
-                  <Download className="w-3.5 h-3.5" />
-                  Download
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <button className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-10 py-5 bg-white text-background rounded-full text-[11px] font-black uppercase italic tracking-tighter hover:bg-accent transition-all shadow-glow group/btn overflow-hidden relative active:scale-95">
+                  <Download className="w-4 h-4 group-hover/btn:-translate-y-1 group-hover/btn:translate-x-0.5 transition-transform" />
+                  Acquire Logic
                 </button>
-                <Link to={`/listing/${order.listingId}`} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">
-                  Details
+                <Link to={`/listing/${order.listingId}`} className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-8 py-5 bg-surface-elevated border border-border rounded-full text-[11px] font-black text-foreground hover:bg-surface hover:border-primary/20 transition-all uppercase italic tracking-widest active:scale-95">
+                  Registry
                 </Link>
               </div>
             </div>

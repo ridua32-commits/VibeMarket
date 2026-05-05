@@ -30,49 +30,55 @@ export default function ManageOrders() {
   const totalRevenue = orders.reduce((sum, order) => order.status === 'completed' ? sum + order.amount : sum, 0);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h2 className="text-3xl font-bold font-display italic">Transaction History</h2>
-          <p className="text-slate-500 text-sm">Real-time ledger of all platform volume.</p>
+    <div className="space-y-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-4 border-b border-border">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 text-[11px] font-black text-accent uppercase tracking-[0.4em] mb-2 italic">
+            <div className="w-8 h-px bg-accent/30" />
+            Ledger Broadcast
+          </div>
+          <h1 className="text-5xl font-black text-foreground font-display tracking-[-0.05em] leading-[0.85] uppercase italic">
+            Network <span className="text-glow-gradient">Volume</span>
+          </h1>
+          <p className="text-muted-foreground text-sm font-bold italic border-l-2 border-primary/20 pl-6 mt-4">Real-time ledger of all protocol acquisition events across the nebula.</p>
         </div>
-        <div className="flex items-center gap-4 bg-indigo-600 rounded-[2rem] p-6 text-white shadow-xl shadow-indigo-100">
-           <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-              <DollarSign className="w-6 h-6" />
+        <div className="flex items-center gap-6 bg-surface border border-border rounded-[2.5rem] p-6 shadow-elegant hover:border-primary/20 transition-all group">
+           <div className="w-16 h-16 rounded-[1.5rem] bg-background border border-border flex items-center justify-center text-primary shadow-glow group-hover:scale-110 transition-transform">
+              <DollarSign className="w-8 h-8" />
            </div>
            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-200">Total Volume</p>
-              <p className="text-2xl font-bold font-display">${totalRevenue.toLocaleString()}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1 italic">Aggregate Flux</p>
+              <p className="text-4xl font-black font-display text-glow-gradient tracking-tighter leading-none italic uppercase">${totalRevenue.toLocaleString()}</p>
            </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-sm">
+      <div className="bg-surface border border-border rounded-[3.5rem] overflow-hidden shadow-elegant">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Transaction</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">User ID</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Amount</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date</th>
+              <tr className="bg-surface-elevated/50 border-b border-border">
+                <th className="px-6 py-5 sm:px-10 sm:py-8 text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] italic">Transmission hash</th>
+                <th className="px-6 py-5 sm:px-10 sm:py-8 text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] italic">Originator ID</th>
+                <th className="px-6 py-5 sm:px-10 sm:py-8 text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] italic">Flux Amount</th>
+                <th className="px-6 py-5 sm:px-10 sm:py-8 text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] italic">Sync Status</th>
+                <th className="px-6 py-5 sm:px-10 sm:py-8 text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] italic">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-border/20">
               {loading ? (
-                [1, 2, 3].map(i => (
-                  <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-4"><div className="h-6 w-32 bg-slate-50 rounded-lg" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-48 bg-slate-50 rounded-lg" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-16 bg-slate-50 rounded-lg" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-24 bg-slate-50 rounded-full" /></td>
-                    <td className="px-6 py-4"><div className="h-6 w-24 bg-slate-50 rounded-lg" /></td>
+                [1, 2, 3, 4, 5].map(i => (
+                  <tr key={i} className="animate-shimmer">
+                    <td className="px-6 py-5 sm:px-10 sm:py-8"><div className="h-6 w-32 bg-surface-elevated rounded-lg" /></td>
+                    <td className="px-6 py-5 sm:px-10 sm:py-8"><div className="h-6 w-48 bg-surface-elevated rounded-lg" /></td>
+                    <td className="px-6 py-5 sm:px-10 sm:py-8"><div className="h-6 w-16 bg-surface-elevated rounded-lg" /></td>
+                    <td className="px-6 py-5 sm:px-10 sm:py-8"><div className="h-6 w-24 bg-surface-elevated rounded-full" /></td>
+                    <td className="px-6 py-5 sm:px-10 sm:py-8"><div className="h-6 w-24 bg-surface-elevated rounded-lg" /></td>
                   </tr>
                 ))
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">No transactions found.</td>
+                  <td colSpan={5} className="px-6 py-16 sm:px-10 sm:py-24 text-center text-muted-foreground/30 font-black uppercase tracking-widest italic">Ledger Null: No transactions recorded.</td>
                 </tr>
               ) : (
                 orders.map((order) => (
@@ -80,35 +86,35 @@ export default function ManageOrders() {
                     key={order.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="hover:bg-slate-50/50 transition-colors"
+                    className="hover:bg-primary/5 transition-all group"
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                          <Package className="w-4 h-4 text-slate-400" />
+                    <td className="px-6 py-5 sm:px-10 sm:py-8">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-background border border-border flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
+                          <Package className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
-                        <span className="font-bold text-slate-900 text-xs tracking-widest uppercase">#{order.id.substring(0, 6)}</span>
+                        <span className="font-black text-foreground text-[10px] sm:text-xs tracking-widest uppercase italic group-hover:text-glow transition-all whitespace-nowrap">#{order.id.substring(0, 8)}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <p className="text-xs text-slate-500 font-medium truncate max-w-[150px]">{order.buyerId}</p>
+                    <td className="px-6 py-5 sm:px-10 sm:py-8">
+                      <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest truncate max-w-[100px] sm:max-w-[150px] italic opacity-60">{order.buyerId}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="font-bold text-slate-900 text-sm">${order.amount.toFixed(2)}</span>
+                    <td className="px-6 py-5 sm:px-10 sm:py-8">
+                      <span className="font-black text-foreground text-sm sm:text-base tracking-tighter italic whitespace-nowrap">${order.amount.toFixed(2)}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
-                        ${order.status === 'completed' ? 'bg-green-50 text-green-700' : 
-                          order.status === 'failed' ? 'bg-red-50 text-red-700' : 
-                          'bg-amber-50 text-amber-700'}`}
+                    <td className="px-6 py-5 sm:px-10 sm:py-8">
+                      <div className={`inline-flex items-center gap-3 px-3 sm:px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border italic whitespace-nowrap
+                        ${order.status === 'completed' ? 'bg-primary/10 text-primary border-primary/20 shadow-glow' : 
+                          order.status === 'failed' ? 'bg-destructive/10 text-destructive border-destructive/20' : 
+                          'bg-surface-elevated text-muted-foreground border-border'}`}
                       >
-                        <div className={`w-1.5 h-1.5 rounded-full ${order.status === 'completed' ? 'bg-green-500' : order.status === 'failed' ? 'bg-red-500' : 'bg-amber-500'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${order.status === 'completed' ? 'bg-primary' : order.status === 'failed' ? 'bg-destructive' : 'bg-muted-foreground'}`} />
                         {order.status}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                        <Calendar className="w-3.5 h-3.5" />
+                    <td className="px-6 py-5 sm:px-10 sm:py-8">
+                      <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest italic opacity-60 whitespace-nowrap">
+                        <Calendar className="w-4 h-4 text-primary/40" />
                         {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'N/A'}
                       </div>
                     </td>

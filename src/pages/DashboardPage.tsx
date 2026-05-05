@@ -47,22 +47,22 @@ export default function DashboardPage({ user, profile }: { user: any, profile: U
   ];
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+    <div className="min-h-[calc(100vh-64px)] bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row gap-12">
         {/* Sidebar */}
         <aside className="w-full md:w-64 shrink-0">
-          <div className="sticky top-24 space-y-1">
-            <div className="p-2 mb-4 space-y-2">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-3">
-                {isAdmin ? 'System Master' : (isSeller ? 'Creator Hub' : 'Collector Hub')}
+          <div className="sticky top-32 space-y-2">
+            <div className="p-3 mb-6 space-y-3">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground px-3 italic">
+                {isAdmin ? 'System Protocol' : (isSeller ? 'Creator Nexus' : 'Collector Node')}
               </h3>
               {isAdmin && (
                 <Link
                   to="/"
-                  className="flex items-center gap-2 px-3 py-1 text-[9px] font-bold text-indigo-600 hover:text-slate-900 transition-colors uppercase tracking-widest"
+                  className="flex items-center gap-2 px-3 py-1.5 text-[10px] font-black text-accent hover:text-foreground transition-all uppercase tracking-widest italic"
                 >
-                  <ExternalLink className="w-3 h-3" />
-                  Visit Hub Front
+                  <ExternalLink className="w-3.5 h-3.5 shadow-cyan-glow" />
+                  View Public Hub
                 </Link>
               )}
             </div>
@@ -72,42 +72,44 @@ export default function DashboardPage({ user, profile }: { user: any, profile: U
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all mb-1",
+                   className={cn(
+                    "flex items-center gap-4 px-6 py-3.5 rounded-full text-xs font-black transition-all mb-2 uppercase tracking-widest italic active:scale-95",
                     isActive 
-                      ? "bg-white text-indigo-600 shadow-sm border border-slate-200" 
-                      : "text-slate-500 hover:bg-slate-100/50 hover:text-slate-700"
+                      ? "bg-primary text-white shadow-glow border border-white/20" 
+                      : "text-muted-foreground hover:bg-surface hover:text-foreground hover:border-border border border-transparent"
                   )}
                 >
-                  <item.icon className={cn("w-4 h-4", isActive ? "text-indigo-600" : "text-slate-400")} />
+                  <item.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-muted-foreground")} />
                   {item.label}
                 </Link>
               );
             })}
             
-            <div className="pt-8">
+            <div className="pt-12">
               {isSeller ? (
-                <div className="bg-indigo-600 border border-indigo-500 rounded-3xl p-5 shadow-xl shadow-indigo-100">
-                  <p className="text-white font-bold text-sm mb-1 font-display italic">List New Asset</p>
-                  <p className="text-indigo-100 text-[10px] font-medium mb-4">Share your vibe-coded logic with the world.</p>
+                <div className="bg-card-gradient border border-primary/30 rounded-[3rem] p-8 shadow-glow relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary rounded-full blur-[80px] opacity-10 -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-all duration-700"></div>
+                  <p className="text-foreground font-black text-lg mb-2 font-display italic tracking-tighter uppercase leading-none relative z-10">Deploy Logic</p>
+                  <p className="text-muted-foreground text-[10px] font-bold mb-6 italic opacity-80 relative z-10 leading-relaxed uppercase tracking-widest">Share your engineered logic with the guild.</p>
                   <Link
                     to="/dashboard/sell"
-                    className="w-full flex items-center justify-center gap-2 bg-white text-indigo-600 text-[10px] font-bold py-3 rounded-xl hover:bg-slate-50 transition-all shadow-md focus:ring-4 focus:ring-white/20"
+                    className="w-full flex items-center justify-center gap-3 bg-white text-background text-[11px] font-black py-4 rounded-full hover:bg-accent transition-all shadow-glow relative z-10 uppercase italic active:scale-95"
                   >
-                    <PlusCircle className="w-3.5 h-3.5" />
-                    Publish Listing
+                    <PlusCircle className="w-4 h-4" />
+                    List Asset
                   </Link>
                 </div>
               ) : (
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl shadow-slate-200">
-                  <p className="text-white font-bold text-sm mb-1 font-display italic">Marketplace</p>
-                  <p className="text-slate-400 text-[10px] font-medium mb-4">Find more vibe-coded apps to accelerate your workflow.</p>
+                <div className="bg-surface border border-border rounded-[3rem] p-8 shadow-elegant group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-accent rounded-full blur-[60px] opacity-5 -translate-y-1/2 translate-x-1/2"></div>
+                  <p className="text-foreground font-black text-lg mb-2 font-display italic tracking-tighter uppercase leading-none">Expansion</p>
+                  <p className="text-muted-foreground text-[10px] font-bold mb-6 italic leading-relaxed uppercase tracking-widest">Discover new modules to optimize your nodes.</p>
                   <Link
                     to="/marketplace"
-                    className="w-full flex items-center justify-center gap-2 bg-white text-slate-900 text-[10px] font-bold py-3 rounded-xl hover:bg-slate-50 transition-all shadow-md"
+                    className="w-full flex items-center justify-center gap-3 bg-surface-elevated border border-border text-foreground text-[11px] font-black py-4 rounded-full hover:bg-primary hover:text-white hover:border-white/20 transition-all shadow-sm shadow-primary/10 uppercase italic active:scale-95"
                   >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    Browse Latest
+                    <ShoppingBag className="w-4 h-4" />
+                    Enter Forge
                   </Link>
                 </div>
               )}
@@ -116,24 +118,28 @@ export default function DashboardPage({ user, profile }: { user: any, profile: U
         </aside>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm">
-          <Routes>
-            <Route index element={<Overview user={user} profile={profile} />} />
-            <Route path="purchases" element={<Purchases />} />
-            <Route path="listings" element={<MyListings />} />
-            <Route path="sell" element={<CreateListing />} />
-            <Route path="edit/:id" element={<CreateListing />} />
-            <Route path="settings" element={<SettingsPage profile={profile} />} />
-            
-            {/* Admin Routes */}
-            {isAdmin && (
-              <>
-                <Route path="admin/users" element={<ManageUsers />} />
-                <Route path="admin/listings" element={<ManageListings />} />
-                <Route path="admin/orders" element={<ManageOrders />} />
-              </>
-            )}
-          </Routes>
+        <div className="flex-1 min-w-0 bg-surface/30 backdrop-blur-xl border border-border rounded-[3.5rem] p-8 md:p-12 shadow-elegant relative overflow-hidden">
+           {/* Decorative background for the content area */}
+           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary rounded-full blur-[150px] opacity-[0.03] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+           <div className="relative z-10 min-h-[600px]">
+            <Routes>
+              <Route index element={<Overview user={user} profile={profile} />} />
+              <Route path="purchases" element={<Purchases />} />
+              <Route path="listings" element={<MyListings />} />
+              <Route path="sell" element={<CreateListing />} />
+              <Route path="edit/:id" element={<CreateListing />} />
+              <Route path="settings" element={<SettingsPage profile={profile} />} />
+              
+              {/* Admin Routes */}
+              {isAdmin && (
+                <>
+                  <Route path="admin/users" element={<ManageUsers />} />
+                  <Route path="admin/listings" element={<ManageListings />} />
+                  <Route path="admin/orders" element={<ManageOrders />} />
+                </>
+              )}
+            </Routes>
+          </div>
         </div>
       </div>
     </div>

@@ -33,112 +33,128 @@ export default function SettingsPage({ profile }: { profile: UserProfile | null 
   };
 
   return (
-    <div className="max-w-2xl space-y-8">
+    <div className="max-w-2xl space-y-12">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Settings</h1>
-        <p className="text-slate-500">Manage your profile and account preferences.</p>
+        <div className="flex items-center gap-3 text-[11px] font-black text-accent uppercase tracking-[0.4em] mb-3 italic">
+          <div className="w-8 h-px bg-accent/30" />
+          Node Configuration
+        </div>
+        <h1 className="text-5xl font-black text-foreground font-display tracking-[-0.05em] leading-[0.85] uppercase italic">
+          Account <span className="text-glow-gradient">Protocols</span>
+        </h1>
+        <p className="text-muted-foreground text-sm font-bold italic border-l-2 border-primary/20 pl-6 mt-6">
+          Optimize your identify parameters and engineer your session credentials.
+        </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden">
-        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center gap-6">
+      <div className="bg-surface border border-border rounded-[3rem] overflow-hidden shadow-elegant">
+        <div className="p-10 border-b border-border flex items-center gap-8 bg-surface-elevated/30">
           <div className="relative group">
-            <div className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center overflow-hidden border-4 border-white dark:border-slate-900 shadow-md">
+            <div className="w-28 h-28 bg-background border-4 border-surface-elevated rounded-[2rem] flex items-center justify-center overflow-hidden shadow-glow transition-transform group-hover:scale-105">
               {profile?.avatarUrl ? (
                 <img src={profile.avatarUrl} className="w-full h-full object-cover" />
               ) : (
-                <User className="w-10 h-10 text-slate-400" />
+                <User className="w-12 h-12 text-muted-foreground/30" />
               )}
             </div>
-            <button className="absolute -bottom-2 -right-2 p-2 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700 transition-all opacity-0 group-hover:opacity-100">
+            <button className="absolute -bottom-2 -right-2 p-3 bg-primary text-white rounded-2xl shadow-glow hover:bg-accent transition-all active:scale-90 border border-white/20">
               <Camera className="w-4 h-4" />
             </button>
           </div>
           <div>
-            <h3 className="text-xl font-bold">{profile?.displayName}</h3>
-            <p className="text-slate-500 text-sm">{profile?.email}</p>
-            <span className="mt-2 inline-block px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 rounded text-[10px] font-bold uppercase tracking-widest">{profile?.role} Account</span>
+            <h3 className="text-3xl font-black text-foreground italic uppercase tracking-tighter leading-none mb-2">{profile?.displayName}</h3>
+            <p className="text-muted-foreground text-xs font-bold italic opacity-60 mb-4">{profile?.email}</p>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full text-[9px] font-black uppercase tracking-[0.2em] italic shadow-glow">
+              <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+              {profile?.role} Authorization
+            </span>
           </div>
         </div>
 
-        <form onSubmit={handleUpdate} className="p-8 space-y-6">
+        <form onSubmit={handleUpdate} className="p-10 md:p-12 space-y-8">
           {success && (
-            <div className="p-3 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 text-sm rounded-lg border border-green-100 dark:border-green-900/50">
-              Profile updated successfully!
+            <div className="p-5 bg-primary/10 text-primary text-[11px] font-black uppercase tracking-widest rounded-2xl border border-primary/20 italic text-center animate-pulse">
+              System Sync Complete: Identity Repropagated.
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-semibold mb-2">Display Name</label>
+          <div className="space-y-3">
+            <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Public Identify Handle</label>
             <input 
               type="text" 
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              className="w-full px-6 py-5 bg-background border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-foreground text-sm font-bold italic"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-2">Phone Number (WhatsApp)</label>
+          <div className="space-y-3">
+            <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Direct Comms (WhatsApp)</label>
             <input 
               type="tel" 
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="+1234567890"
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              className="w-full px-6 py-5 bg-background border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-foreground text-sm font-bold italic"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-2">Bio</label>
+          <div className="space-y-3">
+            <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Core Node Bio</label>
             <textarea 
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={3}
-              placeholder="Tell us about yourself..."
-              className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+              placeholder="Tell us about your engineering philosophy..."
+              className="w-full px-6 py-5 bg-background border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all resize-none text-foreground text-sm font-bold italic"
             />
           </div>
 
-          <div className="pt-4">
+          <div className="pt-6">
             <button 
               type="submit" 
               disabled={loading}
-              className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-xl font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-all disabled:opacity-50"
+              className="px-12 py-5 bg-white text-background rounded-full font-black text-xs uppercase tracking-tighter hover:bg-accent transition-all shadow-glow hover:shadow-cyan-glow disabled:opacity-50 italic active:scale-95"
             >
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? 'Propagating...' : 'Commit Changes'}
             </button>
           </div>
         </form>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 space-y-6">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <Shield className="w-5 h-5 text-indigo-500" />
-          Security & Payments
+      <div className="bg-surface border border-border rounded-[3rem] p-10 md:p-12 space-y-10 shadow-elegant relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2"></div>
+        <h2 className="text-2xl font-black flex items-center gap-4 text-foreground uppercase italic tracking-tighter">
+          <Shield className="w-6 h-6 text-accent shadow-cyan-glow" />
+          Shield & Treasury
         </h2>
         
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border border-slate-100 dark:border-slate-800 rounded-2xl">
-            <div className="flex items-center gap-3">
-              <CreditCard className="w-5 h-5 text-slate-400" />
+          <div className="flex items-center justify-between p-6 bg-background border border-border rounded-[2.5rem] group hover:border-primary/20 transition-all">
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
+                <CreditCard className="w-6 h-6" />
+              </div>
               <div>
-                <p className="font-semibold text-sm">Payout Method</p>
-                <p className="text-xs text-slate-500">Not connected</p>
+                <p className="font-black text-sm uppercase tracking-tight text-foreground italic leading-none mb-1">Treasury Link</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-60">Payout architecture status</p>
               </div>
             </div>
-            <button className="text-sm font-bold text-indigo-600 hover:underline">Connect Stripe</button>
+            <button className="text-xs font-black text-primary hover:text-accent uppercase tracking-widest italic transition-colors">Connect Stripe</button>
           </div>
           
-          <div className="flex items-center justify-between p-4 border border-slate-100 dark:border-slate-800 rounded-2xl">
-            <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-slate-400" />
+          <div className="flex items-center justify-between p-6 bg-background border border-border rounded-[2.5rem] group hover:border-primary/20 transition-all">
+            <div className="flex items-center gap-5">
+               <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
+                <Bell className="w-6 h-6" />
+              </div>
               <div>
-                <p className="font-semibold text-sm">Notifications</p>
-                <p className="text-xs text-slate-500">Email alerts for sales</p>
+                <p className="font-black text-sm uppercase tracking-tight text-foreground italic leading-none mb-1">Signal Alerts</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-60">Direct telemetry for events</p>
               </div>
             </div>
-            <div className="w-10 h-5 bg-indigo-600 rounded-full relative">
-              <div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+            <div className="w-12 h-6 bg-primary/20 border border-primary/30 rounded-full relative group">
+              <div className="absolute right-1 top-1 w-4 h-4 bg-primary rounded-full shadow-glow"></div>
             </div>
           </div>
         </div>

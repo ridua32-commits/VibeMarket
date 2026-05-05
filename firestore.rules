@@ -102,6 +102,7 @@ service cloud.firestore {
 
     match /orders/{orderId} {
       allow read: if isValidId(orderId) && isSignedIn() && (isOwner(resource.data.buyerId) || isOwner(resource.data.sellerId) || isAdmin());
+      allow list: if isAdmin() || (isSignedIn() && (resource.data.buyerId == request.auth.uid || resource.data.sellerId == request.auth.uid));
       allow create: if isValidId(orderId) && isSignedIn() && isValidOrder(incoming()) && incoming().createdAt == request.time;
       allow update: if isValidId(orderId) && isAdmin(); 
     }
