@@ -9,7 +9,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { motion } from 'motion/react';
-import { Mail, Lock, User, Github, Chrome, Phone } from 'lucide-react';
+import { Mail, Lock, User, Phone, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export default function AuthPage() {
@@ -47,20 +47,32 @@ export default function AuthPage() {
       }
       navigate('/dashboard');
     } catch (err: any) {
+      let message = err.message;
+      
       if (err.code === 'auth/invalid-credential') {
-        setError('Login failed. If you usually use Google, please click the Google button below. Otherwise, check your password.');
+        message = 'Invalid email or password. Please check your credentials and try again.';
+      } else if (err.code === 'auth/user-not-found') {
+        message = 'No account found with this email. Would you like to create one?';
+      } else if (err.code === 'auth/wrong-password') {
+        message = 'Incorrect password. If you signed up with Google, please use the Google button below.';
       } else if (err.code === 'auth/unauthorized-domain') {
         const domain = window.location.hostname;
-        setError(`Unauthorized Domain: Please add "${domain}" to your Firebase Console (Authentication > Settings > Authorized Domains).`);
-      } else {
-        setError(err.message);
+        message = `Access Denied: Please add "${domain}" to authorized domains in your Firebase Console (Authentication > Settings > Authorized Domains).`;
+      } else if (err.code === 'auth/email-already-in-use') {
+        message = 'An account with this email already exists. Try logging in instead.';
+      } else if (err.code === 'auth/weak-password') {
+        message = 'Password is too weak. Please use at least 6 characters.';
       }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
@@ -81,12 +93,20 @@ export default function AuthPage() {
       }
       navigate('/dashboard');
     } catch (err: any) {
+      let message = err.message;
+      
       if (err.code === 'auth/unauthorized-domain') {
         const domain = window.location.hostname;
-        setError(`Unauthorized Domain: Please add "${domain}" to your Firebase Console (Authentication > Settings > Authorized Domains) to enable login.`);
-      } else {
-        setError(err.message);
+        message = `Unauthorized Domain: Please add "${domain}" to your Firebase Console (Authentication > Settings > Authorized Domains) to enable login.`;
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        message = 'Google sign-in was cancelled. Please try again.';
+      } else if (err.code === 'auth/popup-blocked') {
+        message = 'Sign-in popup was blocked by your browser. Please allow popups for this site.';
       }
+      
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -131,62 +151,77 @@ export default function AuthPage() {
       {/* Form Side */}
       <div className="flex items-center justify-center p-6 sm:p-12 md:p-20 relative overflow-hidden bg-background">
         <div className="absolute inset-0 bg-grid-white opacity-[0.02] pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(111,0,255,0.05),transparent_70%)] pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-0 animate-pulse pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-[100px] -z-0 pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="w-full max-w-md space-y-12 relative z-10"
+          className="w-full max-w-md space-y-10 relative z-10"
         >
-          <div className="text-center lg:text-left mb-10">
+          <div className="text-center lg:text-left">
             <div className="lg:hidden w-16 h-16 bg-white rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-glow">
               <span className="text-background font-black text-3xl font-display italic">V</span>
             </div>
-            <h1 className="text-5xl font-black text-foreground mb-3 font-display italic tracking-[-0.05em] uppercase leading-none">
-              {isRegister ? 'New Deployment' : 'System Access'}
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+            >
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">System Access v2.0</span>
+            </motion.div>
+            <h1 className="text-5xl font-black text-foreground mb-4 font-display italic tracking-[-0.05em] uppercase leading-none">
+              {isRegister ? 'Create Account' : 'Welcome Back'}
             </h1>
-            <p className="text-muted-foreground text-[11px] font-black uppercase tracking-[0.4em] leading-relaxed italic">
-              {isRegister ? 'Initialize your engineering identify' : 'Authorize current session tokens'}
+            <p className="text-muted-foreground text-sm font-medium tracking-tight max-w-[300px] mx-auto lg:mx-0">
+              {isRegister ? 'Join the marketplace and start exploring elite logic systems.' : 'Login to access your personalized architecture node.'}
             </p>
           </div>
 
           {isRegister && (
-            <div className="flex gap-2 p-1.5 bg-surface rounded-full border border-border shadow-inner">
+            <div className="flex p-1 bg-surface-elevated rounded-2xl border border-border/50 backdrop-blur-sm shadow-inner group">
               <button
                 onClick={() => setRole('buyer')}
                 className={cn(
-                  "flex-1 py-3 px-4 rounded-full text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
+                  "flex-1 py-3 px-4 rounded-xl text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
                   role === 'buyer' 
-                    ? "bg-primary text-white shadow-glow" 
+                    ? "bg-white text-black shadow-lg" 
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                Acquire Mode
+                Buy Mode
               </button>
               <button
                 onClick={() => setRole('seller')}
                 className={cn(
-                  "flex-1 py-3 px-4 rounded-full text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
+                  "flex-1 py-3 px-4 rounded-xl text-[10px] font-black transition-all uppercase tracking-[0.2em] italic",
                   role === 'seller' 
-                    ? "bg-primary text-white shadow-glow" 
+                    ? "bg-white text-black shadow-lg" 
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                Creator Mode
+                Sell Mode
               </button>
             </div>
           )}
 
           {error && (
-            <div className="p-5 bg-destructive/10 text-destructive text-[11px] font-black uppercase tracking-widest rounded-2xl border border-destructive/20 italic text-center animate-pulse">
-              {error}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-center"
+            >
+              <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] italic">
+                {error}
+              </p>
+            </motion.div>
           )}
 
           <form onSubmit={handleAuth} className="space-y-6">
             {isRegister && (
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Identify Handle</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Full Name</label>
                 <div className="relative group">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                   <input
@@ -195,7 +230,7 @@ export default function AuthPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full pl-14 pr-6 py-5 bg-surface border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/30 text-foreground text-sm font-bold italic"
-                    placeholder="Enter full name"
+                    placeholder="Enter your name"
                   />
                 </div>
               </div>
@@ -203,7 +238,7 @@ export default function AuthPage() {
 
             {isRegister && (
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Direct Comms (WhatsApp)</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">WhatsApp Number</label>
                 <div className="relative group">
                   <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                   <input
@@ -219,7 +254,7 @@ export default function AuthPage() {
             )}
 
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Secure Address</label>
+              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Email Address</label>
               <div className="relative group">
                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                 <input
@@ -228,13 +263,13 @@ export default function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-14 pr-6 py-5 bg-surface border border-border rounded-3xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/30 text-foreground text-sm font-bold italic"
-                  placeholder="name@domain.com"
+                  placeholder="name@example.com"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Access Passkey</label>
+              <label className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-4 italic">Password</label>
               <div className="relative group">
                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-accent transition-all duration-300" />
                 <input
@@ -251,40 +286,47 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-6 bg-white text-background rounded-full font-black text-xl uppercase tracking-tighter hover:bg-accent transition-all shadow-glow hover:shadow-cyan-glow disabled:opacity-50 mt-4 active:scale-95 italic group"
+              className="w-full relative group overflow-hidden rounded-2xl py-5 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:scale-[1.01] active:scale-[0.98] transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-glow disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed mt-8 italic"
             >
-              {loading ? 'Initializing...' : isRegister ? 'Establish Node' : 'Authorize Sync'}
+               <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+               <span className="relative z-10 flex items-center justify-center gap-3">
+                  {loading ? (
+                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      {isRegister ? 'Register Account' : 'Sign In Now'}
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+               </span>
             </button>
           </form>
 
-          <div className="relative py-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border"></span>
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.4em] font-display">
-              <span className="bg-background px-8 text-muted-foreground italic">Vibe Protocols</span>
-            </div>
+          <div className="text-center py-2">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-3 font-display italic">
+              {isRegister ? 'Already have an account?' : 'Need a new identity?'}
+            </p>
+            <button
+              onClick={() => navigate(isRegister ? '/auth' : '/auth?mode=register')}
+              className="text-[10px] font-black text-primary hover:text-primary/80 uppercase tracking-[0.2em] transition-colors italic group"
+            >
+              {isRegister ? 'Login Instead' : 'Register Now'}
+              <span className="block h-0.5 w-0 group-hover:w-full bg-primary transition-all duration-300 mx-auto mt-1"></span>
+            </button>
           </div>
 
           <button
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-5 py-5 bg-surface-elevated border border-border rounded-full font-black text-xs text-foreground hover:bg-surface transition-all shadow-elegant group active:scale-95 uppercase italic tracking-widest"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-4 py-4 bg-surface-elevated/50 border border-border/50 rounded-2xl font-black text-[10px] text-foreground hover:bg-surface-elevated hover:border-primary/30 transition-all group active:scale-95 uppercase italic tracking-widest disabled:opacity-50"
           >
-            <Chrome className="w-6 h-6 text-accent group-hover:scale-125 transition-all shadow-cyan-glow" />
-            Sync with Google
+            <img 
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+              alt="Google" 
+              className="w-5 h-5 group-hover:scale-110 transition-all"
+            />
+            <span>{loading ? 'Processing Sync...' : 'Continue with Google'}</span>
           </button>
-
-          <div className="text-center pt-8">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-4 font-display italic">
-              {isRegister ? 'Already established?' : "Zero knowledge record?"}
-            </p>
-            <Link
-              to={isRegister ? '/auth' : '/auth?mode=register'}
-              className="text-foreground font-black text-lg tracking-tighter hover:text-accent transition-all italic font-display uppercase border-b-2 border-primary/20 pb-2 hover:border-accent"
-            >
-              {isRegister ? 'Initiate Sign in sequence' : 'Initialize New Account'}
-            </Link>
-          </div>
         </motion.div>
       </div>
     </div>
