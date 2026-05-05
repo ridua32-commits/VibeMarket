@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        request.auth.token.email == "ridua32@gmail.com" ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // Global constraints
+    function isNotChanging(field) { return !incoming().diff(existing()).affectedKeys().hasAny([field]) || incoming()[field] == existing()[field]; }
+
+    // Validation Blueprint for Users
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt']) 
+        && data.keys().size() >= 4 && data.keys().size() <= 10
+        && data.uid is string && data.uid == request.auth.uid
+        && data.email is string && data.email.size() > 5 && data.email.size() < 100
+        && data.role in ['buyer', 'seller', 'admin']
+        && (data.role == 'admin' ? isAdmin() : true); // Only admins can grant admin role
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isSignedIn();
+      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100 && resource.data.uid == request.auth.uid);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUser(incoming()) && incoming().createdAt == request.time;
+      allow update: if isValidId(userId) && (
+        (isOwner(userId) && isValidUser(incoming()) 
+          && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'bio', 'avatarUrl', 'phoneNumber'])
+          && isNotChanging('role') && isNotChanging('uid') && isNotChanging('email')) ||
+        (isAdmin() && isValidUser(incoming())
+          && incoming().diff(existing()).affectedKeys().hasOnly(['role'])
+          && isNotChanging('uid') && isNotChanging('email') && isNotChanging('createdAt'))
+      );
+    }
+
+    // Validation Blueprint for Listings
+    function isValidListing(data) {
+      return data.keys().hasAll(['sellerId', 'title', 'price', 'category', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().size() >= 7 && data.keys().size() <= 30
+        && data.sellerId is string && data.sellerId == request.auth.uid
+        && data.title is string && data.title.size() >= 2 && data.title.size() <= 200
+        && data.price is number && data.price >= 0
+        && data.category is string
+        && data.status in ['draft', 'pending', 'active', 'suspended', 'private', 'sold']
+        && (data.createdAt is timestamp || data.createdAt == request.time)
+        && (data.updatedAt is timestamp || data.updatedAt == request.time);
+    }
+
+    match /listings/{listingId} {
+      allow get: if isValidId(listingId) && (
+        resource.data.status == 'active' || isOwner(resource.data.sellerId) || isAdmin()
+      );
+      allow list: if isAdmin() || resource.data.status == 'active' || isOwner(resource.data.sellerId);
+      
+      allow create: if isSignedIn() && isValidId(listingId) && isValidListing(incoming()) 
+        && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      
+      allow update: if isValidId(listingId) && (isOwner(existing().sellerId) || isAdmin()) 
+        && isValidListing(incoming())
+        && incoming().updatedAt == request.time
+        && isNotChanging('sellerId') && isNotChanging('createdAt')
+        && (
+          (isOwner(existing().sellerId) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'price', 'category', 'techStack', 'fileUrl', 'demoLink', 'screenshots', 'tags', 'status', 'updatedAt', 'features'])) ||
+          (isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+        );
+      
+      allow delete: if isValidId(listingId) && (isOwner(resource.data.sellerId) || isAdmin());
+
+      match /reviews/{reviewId} {
+        allow read: if isValidId(listingId) && isValidId(reviewId);
+        allow create: if isValidId(listingId) && isValidId(reviewId) 
+          && isSignedIn() 
+          && incoming().buyerId == request.auth.uid
+          && incoming().listingId == listingId
+          && incoming().rating is int && incoming().rating >= 1 && incoming().rating <= 5
+          && exists(/databases/$(database)/documents/listings/$(listingId));
+      }
+    }
+
+    // Validation Blueprint for Orders
+    function isValidOrder(data) {
+      return data.keys().hasAll(['buyerId', 'sellerId', 'listingId', 'amount', 'status', 'createdAt'])
+        && data.keys().size() >= 6 && data.keys().size() <= 10
+        && data.buyerId == request.auth.uid
+        && data.amount is number && data.amount >= 0
+        && data.status in ['pending', 'completed', 'failed']
+        && exists(/databases/$(database)/documents/listings/$(data.listingId));
+    }
+
+    match /orders/{orderId} {
+      allow read: if isValidId(orderId) && isSignedIn() && (isOwner(resource.data.buyerId) || isOwner(resource.data.sellerId) || isAdmin());
+      allow create: if isValidId(orderId) && isSignedIn() && isValidOrder(incoming()) && incoming().createdAt == request.time;
+      allow update: if isValidId(orderId) && isAdmin(); 
+    }
+  }
+}

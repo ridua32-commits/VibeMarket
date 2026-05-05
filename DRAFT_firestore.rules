@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // Global constraints
+    function isNotChanging(field) { return !incoming().diff(existing()).affectedKeys().hasAny([field]) || incoming()[field] == existing()[field]; }
+
+    // Validation Blueprint for Users
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt']) 
+        && data.keys().size() >= 4 && data.keys().size() <= 10
+        && data.uid is string && data.uid == request.auth.uid
+        && data.email is string && data.email.size() > 5 && data.email.size() < 100
+        && data.role in ['buyer', 'seller', 'admin']
+        && (data.role == 'admin' ? isAdmin() : true); // Only admins can grant admin role
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(incoming()) && incoming().createdAt == request.time;
+      allow update: if isOwner(userId) && isValidUser(incoming()) 
+        && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'bio', 'avatarUrl', 'phoneNumber'])
+        && isNotChanging('role') && isNotChanging('uid') && isNotChanging('email');
+    }
+
+    // Validation Blueprint for Listings
+    function isValidListing(data) {
+      return data.keys().hasAll(['sellerId', 'title', 'price', 'category', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().size() >= 7 && data.keys().size() <= 15
+        && data.sellerId is string && data.sellerId == request.auth.uid
+        && data.title is string && data.title.size() >= 3 && data.title.size() <= 100
+        && data.price is number && data.price >= 0
+        && data.category in ['SaaS', 'Landing Page', 'Mobile App', 'AI Tool']
+        && data.status in ['draft', 'pending', 'active', 'suspended'];
+    }
+
+    match /listings/{listingId} {
+      // Secure List Queries: Evaluation of resource.data against status or owner
+      allow get: if isValidId(listingId) && (
+        resource.data.status == 'active' || isOwner(resource.data.sellerId) || isAdmin()
+      );
+      allow list: if resource.data.status == 'active' || isOwner(resource.data.sellerId) || isAdmin();
+      
+      allow create: if isSignedIn() && isValidListing(incoming()) 
+        && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      
+      allow update: if (isOwner(existing().sellerId) || isAdmin()) 
+        && isValidListing(incoming())
+        && incoming().updatedAt == request.time
+        && isNotChanging('sellerId') && isNotChanging('createdAt')
+        && (
+          // Status lock: Cannot move from finished/suspended if policy exists, but here we just restrict fields
+          incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'price', 'category', 'techStack', 'fileUrl', 'demoLink', 'screenshots', 'tags', 'status', 'updatedAt'])
+        );
+      
+      allow delete: if isOwner(resource.data.sellerId) || isAdmin();
+
+      // Subcollection: Reviews
+      match /reviews/{reviewId} {
+        allow read: if true;
+        allow create: if isSignedIn() && isValidId(reviewId) 
+          && incoming().buyerId == request.auth.uid
+          && incoming().listingId == listingId
+          && incoming().rating is int && incoming().rating >= 1 && incoming().rating <= 5
+          && exists(/databases/$(database)/documents/listings/$(listingId));
+      }
+    }
+
+    // Validation Blueprint for Orders
+    function isValidOrder(data) {
+      return data.keys().hasAll(['buyerId', 'sellerId', 'listingId', 'amount', 'status', 'createdAt'])
+        && data.keys().size() >= 6 && data.keys().size() <= 10
+        && data.buyerId == request.auth.uid
+        && data.amount is number && data.amount >= 0
+        && data.status in ['pending', 'completed', 'failed']
+        && exists(/databases/$(database)/documents/listings/$(data.listingId));
+    }
+
+    match /orders/{orderId} {
+      allow read: if isSignedIn() && (isOwner(resource.data.buyerId) || isOwner(resource.data.sellerId) || isAdmin());
+      allow create: if isSignedIn() && isValidOrder(incoming()) && incoming().createdAt == request.time;
+      // Orders are typically updated by system (Admin or via Cloud Functions), 
+      // but for client-side we'll allow if owner for status updates? 
+      // Actually strictly let's allow only completed if session exists.
+      allow update: if isAdmin(); 
+    }
+  }
+}
